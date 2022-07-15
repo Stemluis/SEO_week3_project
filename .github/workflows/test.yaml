@@ -22,3 +22,6 @@ jobs:
 
       - name: Test webpages
         run: python3 tests/test_basic.py
+
+      - name: Test data input
+        run: python3 tests/test_food_items.py
