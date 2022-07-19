@@ -7,6 +7,7 @@ from pandas import DataFrame
 app = Flask(__name__)
 proxied = FlaskBehindProxy(app)  ## add this line
 app.config['SECRET_KEY'] = 'ea7c8cf166ec194d38b0cfd171d58bc0'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)

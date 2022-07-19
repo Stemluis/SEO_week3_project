@@ -1,4 +1,4 @@
-name: Tests
+name: Test and deploy
 on: push
 
 jobs:
@@ -6,24 +6,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: |
+          git fetch --prune --unshallow
 
       - name: Setup python
         uses: actions/setup-python@v2
         with:
           python-version: 3.6
 
-      - name: Install tools
+      - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip pytest
-          pip3 install flask
-          pip3 install flask-wtf
-          pip3 install flask-sqlalchemy
-          pip3 install email-validator
-          pip3 install phonenumbers
-          pip3 install pandas
+          python -m pip install --upgrade pip
+          pip install pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          
+      # - name: Lint with pycodestyle
+      #   run: |
+      #     pycodestyle --first *.py
 
-      - name: Test webpages
-        run: python3 tests/test_basic.py
+      - name: Test with pytest
+        run: |
+          python3 -m pytest
 
-      - name: Test data input
-        run: python3 tests/test_food_items.py
+- name: Deploy to Heroku
+        env:
+          HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
+          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+        if: github.ref == 'refs/heads/master' && job.status == 'success'
+        run: |
+          git remote add heroku https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git
+          git push heroku HEAD:master -f
