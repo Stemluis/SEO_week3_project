@@ -19,6 +19,8 @@ jobs:
           pip3 install flask-wtf
           pip3 install flask-sqlalchemy
           pip3 install email-validator
+          pip3 install phonenumbers
+          pip3 install pandas
 
       - name: Test webpages
         run: python3 tests/test_basic.py
